@@ -1,0 +1,16 @@
+.git
+__pycache__
+*.pyc
+*.pyo
+*.pyd
+.env
+venv
+.venv
+data/
+datasets/
+models/
+*.pt
+*.bin
+*.mp3
+*.wav
+*.flac

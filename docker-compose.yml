@@ -1,0 +1,40 @@
+services:
+  bot:
+    build: .
+    container_name: voice_transcribot
+    restart: unless-stopped
+    env_file:
+      - .env.docker
+    depends_on:
+      - db
+    volumes:
+      - .:/voice_transcribot
+    networks:
+      - voice_transcribot_network
+
+  db:
+    container_name: voice_transcribot_db
+    image: postgres:latest
+    restart: unless-stopped
+    env_file:
+      - .env.docker
+    ports:
+      - "5488:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql
+    networks:
+      - voice_transcribot_network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
+
+volumes:
+  postgres_data:
+
+networks:
+  voice_transcribot_network:
+    driver: bridge
