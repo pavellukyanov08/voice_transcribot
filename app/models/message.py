@@ -10,12 +10,7 @@ class Message(Base):
     __tablename__ = "messages"
 
     id: Mapped[int] = mapped_column(primary_key=True, comment="ID записи транскрипции")
-    
-    file_id: Mapped[str] = mapped_column(String(255), comment="ID файла в Telegram")
-    file_unique_id: Mapped[str] = mapped_column(String(255), comment="Уникальный ID файла")
-    
     text: Mapped[str] = mapped_column(Text, comment="Распознанный текст")
-    confidence: Mapped[float] = mapped_column(Float, nullable=True, comment="Уверенность модели")
     processing_time: Mapped[float] = mapped_column(Float, comment="Время обработки в секундах")
     
     user_id: Mapped[int] = mapped_column(

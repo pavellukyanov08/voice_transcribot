@@ -4,7 +4,7 @@ from sqlalchemy import select, desc
 from sqlalchemy.orm import selectinload
 
 from app.models import Message
-from app.schemas import MessageCreate, MessageUpdate, MessageRead
+from app.schemas import MessageCreate
 
 
 logger = logging.getLogger(__name__)
@@ -44,14 +44,6 @@ class MessageRepository:
             return None
         return result
     
-    async def get_by_file_id(self, file_id: str) -> Message | None:
-        result = await self._session.execute(
-            select(Message)
-            .options(selectinload(Message.user))
-            .where(Message.file_id == file_id)
-        )
-        return result.scalar_one_or_none()
-    
     async def get_user_messages(
         self, 
         user_id: int,
@@ -68,46 +60,7 @@ class MessageRepository:
             .offset(offset)
         )
         return list(result.scalars().all())
-    
-    async def get_recent_messages(
-        self, 
-        limit: int = 100
-    ) -> list[Message]:
-        result = await self._session.execute(
-            select(Message)
-            .options(selectinload(Message.user))
-            .order_by(desc(Message.created_at))
-            .limit(limit)
-        )
-        return list(result.scalars().all())
-    
-    async def update(
-        self, 
-        message_id: int,
-        message_update: MessageUpdate
-    ) -> Message | None:
-        db_message = await self.get_by_id(message_id)
-        if not db_message:
-            return None
-        
-        update_data = message_update.model_dump(exclude_unset=True)
-        for field, value in update_data.items():
-            setattr(db_message, field, value)
-        
-        await self._session.commit()
-        await self._session.refresh(db_message)
-        return db_message
-    
-    async def delete(self, message_id: int) -> bool:
-        """Удаляет сообщение"""
-        message = await self.get_by_id(message_id)
-        if not message:
-            return False
-        
-        await self._session.delete(message)
-        await self._session.commit()
-        return True
-    
+
     async def count_user_messages(self, user_id: int) -> int:
         """Подсчитывает количество сообщений пользователя"""
         result = await self._session.execute(
