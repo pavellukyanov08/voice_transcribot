@@ -1,5 +1,4 @@
 from datetime import datetime
-from typing import Optional
 from pydantic import BaseModel, Field
 
 
@@ -11,10 +10,6 @@ class MessageBase(BaseModel):
 class MessageCreate(MessageBase):
     user_id: int = Field(..., description="ID пользователя")
     text: str = Field(..., description="Распознанный текст")
-
-
-class MessageUpdate(BaseModel):
-    text: Optional[str] = Field(None, description="Обновленный текст")
 
 
 class MessageRead(MessageBase):

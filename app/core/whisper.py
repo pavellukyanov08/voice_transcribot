@@ -72,9 +72,6 @@ class WhisperSTT:
             task="transcribe",
             temperature=0.0,
             verbose=False,
-            fp16=torch.cuda.is_available(),
+            fp16=False,
             condition_on_previous_text=False,
-            # no_speech_threshold=0.6,  # Порог тишины
-            # logprob_threshold=-1.0,  # Порог вероятности
-            # compression_ratio_threshold=2.4,  # Порог сжатия
         )

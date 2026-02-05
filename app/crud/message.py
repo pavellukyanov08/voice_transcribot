@@ -4,7 +4,7 @@ from sqlalchemy import select, desc
 from sqlalchemy.orm import selectinload
 
 from app.models import Message
-from app.schemas import MessageCreate, MessageUpdate, MessageRead
+from app.schemas import MessageCreate
 
 
 logger = logging.getLogger(__name__)

@@ -88,7 +88,7 @@ class MessageService:
             )
             
         finally:
-            self._cleanup_files([ogg_path])
+            self._cleanup_files([ogg_path, wav_path])
 
     async def _download_voice_file(self, file_id: str) -> Path | None:
         try:
