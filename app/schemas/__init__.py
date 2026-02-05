@@ -4,7 +4,6 @@ from .voice import (
     VoiceMessageRequest,
     AudioProcessingRequest,
     AudioProcessingResult,
-    TranscriptionMetadata,
     VoiceTranscriptionRecord,
     AudioFileInfo,
     WhisperModelConfig
@@ -21,7 +20,6 @@ __all__ = [
     "VoiceMessageRequest",
     "AudioProcessingRequest",
     "AudioProcessingResult",
-    "TranscriptionMetadata",
     "VoiceTranscriptionRecord",
     "AudioFileInfo",
     "WhisperModelConfig"

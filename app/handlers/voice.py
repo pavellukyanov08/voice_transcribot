@@ -34,7 +34,6 @@ async def handle_voice(
             file_id=message.voice.file_id,
             file_unique_id=message.voice.file_unique_id,
             duration=message.voice.duration,
-            mime_type=message.voice.mime_type,
             file_size=message.voice.file_size
         )
         

@@ -59,18 +59,6 @@ class AudioProcessingResult(BaseModel):
             }
         }
 
-
-class TranscriptionMetadata(BaseModel):
-    """Метаданные транскрипции"""
-    original_format: str = Field(..., description="Исходный формат файла")
-    converted_format: str = Field(..., description="Формат после конвертации")
-    sample_rate: int = Field(..., description="Частота дискретизации")
-    channels: int = Field(..., description="Количество каналов")
-    duration: float = Field(..., ge=0, description="Длительность аудио")
-    file_size_original: int = Field(..., ge=0, description="Размер исходного файла")
-    file_size_converted: int = Field(..., ge=0, description="Размер конвертированного файла")
-
-
 class VoiceTranscriptionRecord(BaseModel):
     """Полная запись транскрипции голосового сообщения"""
     id: int| None = Field(default=None, description="ID записи в БД")
@@ -79,7 +67,6 @@ class VoiceTranscriptionRecord(BaseModel):
     original_text: str = Field(..., description="Распознанный текст")
     confidence: float | None = Field(default=None, ge=0, le=1, description="Уверенность модели")
     processing_time: float = Field(..., ge=0, description="Время обработки")
-    metadata: TranscriptionMetadata | None = Field(default=None, description="Метаданные обработки")
     created_at: datetime = Field(..., description="Время создания записи")
     
     class Config:
@@ -112,14 +99,14 @@ class AudioFileInfo(BaseModel):
 
 class WhisperModelConfig(BaseModel):
     """Конфигурация для Whisper модели"""
-    model_size: str = Field(default="small", description="Размер модели Whisper")
+    size: str = Field(default="small", description="Размер модели Whisper")
     temperature: float = Field(default=0.0, ge=0, le=1, description="Температура для генерации")
     fp16: bool = Field(default=False, description="Использовать FP16")
     device: str | None = Field(default=None, description="Устройство для вычислений")
     
-    @field_validator('model_size')
-    def validate_model_size(cls, v):
-        allowed_sizes = settings.WHISPER_MODEL_SIZE
+    @field_validator('size')
+    def validate_size(cls, v):
+        allowed_sizes = settings.MODEL_SIZE
         if v not in allowed_sizes:
             raise ValueError(f'Размер модели должен быть одним из: {allowed_sizes}')
         return v
@@ -127,7 +114,7 @@ class WhisperModelConfig(BaseModel):
     class Config:
         json_schema_extra = {
             "example": {
-                "model_size": "small",
+                "size": "small",
                 "temperature": 0.0,
                 "fp16": False,
                 "device": "cuda"

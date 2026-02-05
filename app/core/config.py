@@ -16,9 +16,9 @@ class Settings(BaseSettings):
     
     BOT_TOKEN: str
     
-    WHISPER_MODEL_SIZE: str = "small"
-
     AUDIO_DIR: str = "audio"
+    MODEL_SIZE: str = "small"
+    WHISPER_LANGUAGE: str = "ru"
     MAX_AUDIO_SIZE_MB: int = 20
 
     @property
