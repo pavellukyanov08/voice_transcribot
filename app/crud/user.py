@@ -46,11 +46,10 @@ class UserRepository:
         telegram_id: int,
         is_active: bool = True
     ) -> None:
-        updated_at = DateTimeManager.get_now_utc()
         stmt = (
             update(User)
             .where(User.telegram_id == telegram_id)
-            .values(is_registered=is_active, updated_at=updated_at)
+            .values(is_registered=is_active)
         )
         await self._session.execute(stmt)
         await self._session.commit()

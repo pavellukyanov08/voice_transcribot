@@ -21,12 +21,6 @@ class User(Base):
         default=DateTimeManager.get_now_utc(),
         comment="User created date",
     )
-    updated_at: Mapped[datetime] = mapped_column(
-        DateTime(timezone=True),
-        default=DateTimeManager.get_now_utc(),
-        onupdate=DateTimeManager.get_now_utc(),
-        comment="User updated date",
-    )
 
     messages = relationship(
         "Message",

@@ -5,31 +5,29 @@ from pathlib import Path
 
 from pydub import AudioSegment
 
-from app.core import voice_transcribot, settings
-from app.core.stt_factory import get_stt_service
+from app.core import voice_transcribot, settings, get_stt_service
 from app.schemas import (
-    VoiceMessageRequest,
     AudioProcessingResult,
-    MessageCreate,
+    AudioMessageRequest,
+    MessageCreate
 )
-from app.crud import MessageRepository
-
+from app.crud import AudioRepository
 
 logger = logging.getLogger(__name__)
 
 
-class MessageService:
-    def __init__(self, message_repo: MessageRepository):
+class AudioService:
+    def __init__(self, message_repo: AudioRepository):
         self.logger = logger
         self._message_repo = message_repo
         self.audio_dir = Path(settings.AUDIO_DIR)
         self.audio_dir.mkdir(exist_ok=True)
-        
+
         self.stt_service = get_stt_service()
 
-    async def process_voice_message(
-        self, 
-        voice_request: VoiceMessageRequest, 
+    async def process_audio_message(
+        self,
+        voice_request: AudioMessageRequest,
         user_id: int,
         save_to_db: bool = True
     ) -> AudioProcessingResult:
@@ -38,7 +36,7 @@ class MessageService:
         wav_path = None
 
         try:
-            ogg_path = await self._download_voice_file(voice_request.file_id)
+            ogg_path = await self._download_audio_file(voice_request.file_id)
             if not ogg_path:
                 return AudioProcessingResult(
                     success=False,
@@ -59,19 +57,21 @@ class MessageService:
                 text = await self.stt_service.transcribe(wav_path)
 
             processing_time = time.time() - start_time
-            
+
             if text:
                 result = AudioProcessingResult(
                     success=True,
                     text=text,
                     processing_time=processing_time,
                 )
-                
+
                 if save_to_db:
                     await self._save_transcription_to_db(
-                        user_id, text, processing_time
+                        text=text,
+                        user_id=user_id,
+                        processing_time=processing_time
                     )
-                
+
                 return result
             else:
                 return AudioProcessingResult(
@@ -88,20 +88,20 @@ class MessageService:
                 error_message=f"Внутренняя ошибка: {str(e)}",
                 processing_time=processing_time
             )
-            
+
         finally:
             self._cleanup_files([ogg_path, wav_path])
 
-    async def _download_voice_file(self, file_id: str) -> Path | None:
+    async def _download_audio_file(self, file_id: str) -> Path | None:
         try:
             file = await voice_transcribot.get_file(file_id)
             ogg_path = self.audio_dir / f"{file_id}.ogg"
-            
+
             await voice_transcribot.download_file(file.file_path, destination=ogg_path)
             self.logger.info(f"Файл скачан: {ogg_path}")
-            
+
             return ogg_path
-            
+
         except Exception as e:
             self.logger.exception(f"Ошибка при скачивании файла {file_id}")
             return None
@@ -127,6 +127,27 @@ class MessageService:
         audio = audio.normalize()
         audio.export(wav_path, format="wav")
 
+    async def _get_audio_info(self, file_path: Path) -> dict:
+        try:
+            loop = asyncio.get_event_loop()
+            info = await loop.run_in_executor(None, self._get_audio_info_sync, file_path)
+            return info
+        except Exception as e:
+            self.logger.warning(f"Не удалось получить информацию о файле {file_path}: {e}")
+            return {"duration": None, "channels": None, "sample_rate": None}
+
+    @staticmethod
+    def _get_audio_info_sync(file_path: Path) -> dict:
+        try:
+            audio = AudioSegment.from_file(file_path)
+            return {
+                "duration": len(audio) / 1000.0,
+                "channels": audio.channels,
+                "sample_rate": audio.frame_rate
+            }
+        except Exception:
+            return {"duration": None, "channels": None, "sample_rate": None}
+
     def _cleanup_files(self, file_paths: list[Path | None]):
         for path in file_paths:
             if path and path.exists():
@@ -137,10 +158,10 @@ class MessageService:
                     self.logger.warning(f"Не удалось удалить файл {path}: {e}")
 
     async def _save_transcription_to_db(
-        self, 
-        user_id: int,
-        text: str, 
-        processing_time: float, 
+            self,
+            text: str,
+            user_id: int,
+            processing_time: float,
     ):
         try:
             message_data = MessageCreate(
@@ -150,6 +171,6 @@ class MessageService:
             )
             await self._message_repo.create_message(message_data=message_data)
             self.logger.info(f"Транскрипция сохранена в БД для пользователя {user_id}")
-                
+
         except Exception as e:
             self.logger.exception(f"Ошибка при сохранении транскрипции в БД: {e}")

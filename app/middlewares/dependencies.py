@@ -4,8 +4,8 @@ from aiogram.types import TelegramObject
 
 from app.core.db import AsyncSessionLocal
 from app.core import voice_transcribot
-from app.crud import MessageRepository, UserRepository
-from app.service import MessageService, UserService
+from app.crud import AudioRepository, UserRepository
+from app.service import AudioService, UserService
 
 
 class DependencyMiddleware(BaseMiddleware):
@@ -20,14 +20,14 @@ class DependencyMiddleware(BaseMiddleware):
     ) -> Any:
         async with AsyncSessionLocal() as session:
             try:
-                message_repo = MessageRepository(session)
+                audio_repo = AudioRepository(session)
                 user_repo = UserRepository(session)
-                message_service = MessageService(message_repo)
+                audio_service = AudioService(audio_repo)
                 user_service = UserService(user_repo)
 
                 data.update({
-                    "message_service": message_service,
-                    "message_repo": message_repo,
+                    "audio_service": audio_service,
+                    "audio_repo": audio_repo,
                     "user_repo": user_repo,
                     "user_service": user_service,
                     "db_session": session,

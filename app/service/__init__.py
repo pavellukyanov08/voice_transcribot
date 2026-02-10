@@ -1,7 +1,7 @@
-from .message import MessageService
+from .audio import AudioService
 from .user import UserService
 
 __all__ = [
-    "MessageService",
+    "AudioService",
     "UserService",
 ]

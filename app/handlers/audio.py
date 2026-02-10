@@ -2,8 +2,8 @@ import logging
 from aiogram import Router, F
 from aiogram.types import Message
 
-from app.service import MessageService, UserService
-from app.schemas import VoiceMessageRequest
+from app.service import AudioService, UserService
+from app.schemas import AudioMessageRequest
 
 
 router = Router()
@@ -11,12 +11,11 @@ logger = logging.getLogger(__name__)
 
 
 @router.message(F.voice)
-async def handle_voice(
+async def handle_audio(
     message: Message,
-    message_service: MessageService,
+    audio_service: AudioService,
     user_service: UserService,
 ):
-    """Обработчик голосовых сообщений"""
     await message.answer("Принял голосовое, расшифровываю...")
 
     telegram_id = message.from_user.id
@@ -30,13 +29,13 @@ async def handle_voice(
         )
 
     try:
-        voice_request = VoiceMessageRequest(
+        voice_request = AudioMessageRequest(
             file_id=message.voice.file_id,
             duration=message.voice.duration,
             file_size=message.voice.file_size
         )
         
-        result = await message_service.process_voice_message(
+        result = await audio_service.process_audio_message(
             voice_request, 
             user_id=message.from_user.id
         )
@@ -49,7 +48,6 @@ async def handle_voice(
             await message.answer(error_msg)
             
     except ValueError as e:
-        # Ошибки валидации Pydantic
         logger.warning(f"Ошибка валидации голосового сообщения: {e}")
         await message.answer("Голосовое сообщение не соответствует требованиям (слишком длинное или большое)")
         

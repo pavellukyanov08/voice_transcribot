@@ -10,7 +10,7 @@ from app.schemas import MessageCreate
 logger = logging.getLogger(__name__)
 
 
-class MessageRepository:
+class AudioRepository:
     def __init__(
         self,
         postgres_session: AsyncSession

@@ -7,7 +7,7 @@ from .middlewares import (
     ErrorHandlerMiddleware
 )
 from .core.bot import voice_transcribot
-from .handlers import start, voice
+from .handlers import start, audio
 from .utils import setup_logging
 
 
@@ -20,9 +20,7 @@ dp.message.middleware(DependencyMiddleware())
 dp.message.middleware(ErrorHandlerMiddleware())
 
 dp.include_router(start.router)
-dp.include_router(voice.router)
-
-
+dp.include_router(audio.router)
 
 
 async def main():

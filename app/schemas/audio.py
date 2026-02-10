@@ -1,11 +1,11 @@
 from pydantic import BaseModel, Field, field_validator
 
 
-class VoiceMessageRequest(BaseModel):
-    """Схема для входящего голосового сообщения"""
+class AudioMessageRequest(BaseModel):
     file_id: str = Field(..., description="ID файла в Telegram")
     duration: int = Field(..., ge=1, description="Длительность в секундах")
     file_size: int | None = Field(None, ge=0, description="Размер файла в байтах")
+    type: str | None = Field(None, description="Тип файла")
     
     @field_validator('duration')
     def validate_duration(cls, v):
@@ -21,18 +21,8 @@ class VoiceMessageRequest(BaseModel):
 
 
 class AudioProcessingResult(BaseModel):
-    """Схема результата обработки аудио"""
     success: bool = Field(..., description="Успешность обработки")
     text: str | None = Field(default=None, description="Распознанный текст")
     error_message: str | None = Field(default=None, description="Сообщение об ошибке")
     processing_time: float | None = Field(default=None, ge=0, description="Время обработки в секундах")
-
-    class Config:
-        json_schema_extra = {
-            "example": {
-                "success": True,
-                "text": "Привет, как дела?",
-                "error_message": None,
-                "processing_time": 2.5,
-            }
-        }
+    file_info: dict | None = Field(default=None, description="Информация о файле")
