@@ -1,16 +1,56 @@
 .git
+.gitignore
+
+# Python
 __pycache__
 *.pyc
 *.pyo
 *.pyd
-.env
+*.py[cod]
+*$py.class
+
+# Virtual environments
 venv
-.venv
+
+# Environment files
+.env
+.env.local
+.env.docker
+
+# Data and models (будут монтированы с хоста)
 data/
 datasets/
 models/
 *.pt
 *.bin
+
+# Audio files (будут монтированы с хоста)
+audio/
 *.mp3
 *.wav
 *.flac
+
+# Logs (будут монтированы с хоста)
+logs/
+*.log
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Docker
+docker-compose.yml
+.dockerignore
+
+# Documentation
+README.md
+
+# Other
+*.tmp
+*.temp

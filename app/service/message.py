@@ -5,7 +5,8 @@ from pathlib import Path
 
 from pydub import AudioSegment
 
-from app.core import voice_transcribot, settings, WhisperSTT
+from app.core import voice_transcribot, settings
+from app.core.stt_factory import get_stt_service
 from app.schemas import (
     VoiceMessageRequest,
     AudioProcessingResult,
@@ -23,7 +24,8 @@ class MessageService:
         self._message_repo = message_repo
         self.audio_dir = Path(settings.AUDIO_DIR)
         self.audio_dir.mkdir(exist_ok=True)
-        self.whisper = WhisperSTT(model_size=settings.MODEL_SIZE)
+        
+        self.stt_service = get_stt_service()
 
     async def process_voice_message(
         self, 
@@ -45,7 +47,7 @@ class MessageService:
 
             audio_path = ogg_path
 
-            text = await self.whisper.transcribe(audio_path)
+            text = await self.stt_service.transcribe(audio_path)
             if not text:
                 wav_path = await self._convert_audio(ogg_path)
                 if not wav_path:
@@ -54,7 +56,7 @@ class MessageService:
                         error_message="Не удалось конвертировать аудиофайл"
                     )
 
-                text = await self.whisper.transcribe(wav_path)
+                text = await self.stt_service.transcribe(wav_path)
 
             processing_time = time.time() - start_time
             
@@ -126,7 +128,6 @@ class MessageService:
         audio.export(wav_path, format="wav")
 
     def _cleanup_files(self, file_paths: list[Path | None]):
-        """Удаляет временные файлы"""
         for path in file_paths:
             if path and path.exists():
                 try:

@@ -32,7 +32,6 @@ async def handle_voice(
     try:
         voice_request = VoiceMessageRequest(
             file_id=message.voice.file_id,
-            file_unique_id=message.voice.file_unique_id,
             duration=message.voice.duration,
             file_size=message.voice.file_size
         )
