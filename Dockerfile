@@ -7,10 +7,16 @@ RUN apt-get update \
         gcc g++ curl ffmpeg \
     && rm -rf /var/lib/apt/lists/*
 
-COPY requirements.txt .
+COPY docker-requirements.txt requirements.txt
 
 RUN pip install --no-cache-dir -r requirements.txt
 
-COPY . .
+COPY app/ ./app/
+COPY alembic.ini .
+COPY migrations/ ./migrations/
+
+RUN mkdir -p audio logs
+
+RUN chmod -R 755 /voice_transcribot
 
 CMD ["python", "-m", "app.main"]
