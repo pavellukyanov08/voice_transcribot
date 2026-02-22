@@ -20,7 +20,7 @@ class Message(Base):
 
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),
-        default=DateTimeManager.get_now_utc(),
+        default=DateTimeManager.get_now_utc,
         comment="Время создания записи",
     )
     user = relationship(

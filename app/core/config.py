@@ -20,19 +20,14 @@ class Settings(BaseSettings):
     MODEL_SIZE: str = "small"
     WHISPER_LANGUAGE: str = "ru"
     MAX_AUDIO_SIZE_MB: int = 20
-    
-    STT_PROVIDER: str
+    MAX_MESSAGE_DURATION: int = 300
+
+    STT_PROVIDER: str = "faster_whisper"
 
     @property
     def async_database_url(self) -> str:
         return (
             f"postgresql+asyncpg://{self.DB_USER}:{self.DB_PASS}@{self.DB_HOST}:{self.DB_PORT}/{self.DB_NAME}"
-        )
-
-    @property
-    def sync_database_url(self) -> str:
-        return (
-            f"postgresql+psycopg2://{self.DB_USER}:{self.DB_PASS}@{self.DB_HOST}:{self.DB_PORT}/{self.DB_NAME}"
         )
 
 

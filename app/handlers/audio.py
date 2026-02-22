@@ -4,7 +4,7 @@ from aiogram.types import Message
 
 from app.service import AudioService, UserService
 from app.schemas import AudioMessageRequest
-
+from app.service.user import UserServiceError
 
 router = Router()
 logger = logging.getLogger(__name__)
@@ -19,14 +19,16 @@ async def handle_audio(
     await message.answer("Принял голосовое, расшифровываю...")
 
     telegram_id = message.from_user.id
-    user_tg_name = message.from_user.username
 
-    current_user = await user_service.get_user(telegram_id=telegram_id)
-    if not current_user:
+    try:
         await user_service.create_user(
             telegram_id=telegram_id,
-            name=user_tg_name if user_tg_name else None,
+            name=message.from_user.username or None,
         )
+    except UserServiceError:
+        logger.error(f"Не удалось получить/создать пользователя {telegram_id}, прерываем обработку")
+        await message.answer("Произошла ошибка при регистрации. Попробуйте ещё раз.")
+        return
 
     try:
         voice_request = AudioMessageRequest(
@@ -34,23 +36,19 @@ async def handle_audio(
             duration=message.voice.duration,
             file_size=message.voice.file_size
         )
-        
+
         result = await audio_service.process_audio_message(
-            voice_request, 
-            user_id=message.from_user.id
+            voice_request,
+            user_id=telegram_id
         )
-        
+
         if result.success and result.text:
             time_info = f" (⏱️ {result.processing_time:.1f}с)" if result.processing_time else ""
             await message.answer(f"📝 {result.text}{time_info}")
         else:
             error_msg = result.error_message or "Не смог ничего разобрать из этого голосового 😔"
             await message.answer(error_msg)
-            
+
     except ValueError as e:
         logger.warning(f"Ошибка валидации голосового сообщения: {e}")
         await message.answer("Голосовое сообщение не соответствует требованиям (слишком длинное или большое)")
-        
-    except Exception as e:
-        logger.exception("Неожиданная ошибка при обработке голосового сообщения")
-        await message.answer("Произошла ошибка при распознавании речи. Попробуйте еще раз.")

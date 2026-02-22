@@ -14,9 +14,10 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY app/ ./app/
 COPY alembic.ini .
 COPY migrations/ ./migrations/
+COPY entrypoint.sh .
 
-RUN mkdir -p audio logs
+RUN mkdir -p audio logs && chmod +x entrypoint.sh
 
 RUN chmod -R 755 /voice_transcribot
 
-CMD ["python", "-m", "app.main"]
+CMD ["./entrypoint.sh"]

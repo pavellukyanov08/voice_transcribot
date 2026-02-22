@@ -1,17 +1,23 @@
+import logging
 from typing import Callable, Dict, Any, Awaitable
+
 from aiogram import BaseMiddleware
 from aiogram.types import TelegramObject
 
 from app.core.db import AsyncSessionLocal
 from app.core import voice_transcribot
+from app.core.transcriber import BaseSTTTranscriber
 from app.crud import AudioRepository, UserRepository
 from app.service import AudioService, UserService
 
+logger = logging.getLogger(__name__)
+
 
 class DependencyMiddleware(BaseMiddleware):
-    def __init__(self):
+    def __init__(self, stt_service: BaseSTTTranscriber):
         self.bot = voice_transcribot
-    
+        self.stt_service = stt_service
+
     async def __call__(
         self,
         handler: Callable[[TelegramObject, Dict[str, Any]], Awaitable[Any]],
@@ -19,24 +25,12 @@ class DependencyMiddleware(BaseMiddleware):
         data: Dict[str, Any]
     ) -> Any:
         async with AsyncSessionLocal() as session:
-            try:
-                audio_repo = AudioRepository(session)
-                user_repo = UserRepository(session)
-                audio_service = AudioService(audio_repo)
-                user_service = UserService(user_repo)
-
-                data.update({
-                    "audio_service": audio_service,
-                    "audio_repo": audio_repo,
-                    "user_repo": user_repo,
-                    "user_service": user_service,
-                    "db_session": session,
-                })
-                
-                return await handler(event, data)
-
-            except Exception as e:
-                import logging
-                logger = logging.getLogger(__name__)
-                logger.error(f"Error in DependencyMiddleware: {e}")
-                raise
+            audio_repo = AudioRepository(session)
+            user_repo = UserRepository(session)
+            audio_service = AudioService(audio_repo, self.stt_service)
+            user_service = UserService(user_repo)
+            data.update({
+                "audio_service": audio_service,
+                "user_service": user_service,
+            })
+            return await handler(event, data)

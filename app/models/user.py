@@ -18,7 +18,7 @@ class User(Base):
 
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),
-        default=DateTimeManager.get_now_utc(),
+        default=DateTimeManager.get_now_utc,
         comment="User created date",
     )
 
@@ -29,4 +29,4 @@ class User(Base):
     )
 
     def __str__(self):
-        return self.name
+        return self.name or str(self.telegram_id)
