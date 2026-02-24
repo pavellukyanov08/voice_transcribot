@@ -1,14 +1,9 @@
 import logging
 
-from app.core.transcriber import BaseSTTTranscriber
 from app.schemas import UserRead, UserCreate
 from app.crud import UserRepository
 
 logger = logging.getLogger(__name__)
-
-
-class UserServiceError(Exception):
-    pass
 
 
 class UserService:
@@ -22,18 +17,17 @@ class UserService:
         self,
         telegram_id: int,
         name: str,
-    ) -> UserRead:
+    ) -> None:
         try:
-            user = await self._user_repo.create_user(
+            await self._user_repo.create_user(
                 UserCreate(
                     telegram_id=telegram_id,
                     name=name,
                 )
             )
-            return UserRead.model_validate(user, from_attributes=True)
         except Exception as e:
             logger.error(f"Failed to create user with TG id {telegram_id}: {e}")
-            raise UserServiceError(f"Failed to create user: {str(e)}") from e
+            return
 
     async def get_user(
         self,

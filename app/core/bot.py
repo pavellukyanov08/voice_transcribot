@@ -1,5 +1,5 @@
+from .config import settings
 from aiogram import Bot
-from app.core.config import settings
 
 
-voice_transcribot = Bot(token=settings.BOT_TOKEN)
+transcribot = Bot(token=settings.BOT_TOKEN)

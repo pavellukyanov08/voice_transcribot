@@ -5,17 +5,17 @@ from aiogram import BaseMiddleware
 from aiogram.types import TelegramObject
 
 from app.core.db import AsyncSessionLocal
-from app.core import voice_transcribot
+from app.core import transcribot
 from app.core.transcriber import BaseSTTTranscriber
 from app.crud import AudioRepository, UserRepository
 from app.service import AudioService, UserService
+
 
 logger = logging.getLogger(__name__)
 
 
 class DependencyMiddleware(BaseMiddleware):
     def __init__(self, stt_service: BaseSTTTranscriber):
-        self.bot = voice_transcribot
         self.stt_service = stt_service
 
     async def __call__(
@@ -27,7 +27,7 @@ class DependencyMiddleware(BaseMiddleware):
         async with AsyncSessionLocal() as session:
             audio_repo = AudioRepository(session)
             user_repo = UserRepository(session)
-            audio_service = AudioService(audio_repo, self.stt_service)
+            audio_service = AudioService(transcribot, audio_repo, self.stt_service)
             user_service = UserService(user_repo)
             data.update({
                 "audio_service": audio_service,

@@ -52,12 +52,19 @@ class FasterWhisperSTT(BaseSTTTranscriber):
         self._device = None
         self._compute_type = None
         self._executor = ThreadPoolExecutor(max_workers=1, thread_name_prefix="whisper")
-        self._load_model()
-        self._is_initialized = True
+        try:
+            self._load_model()
+            self._is_initialized = True
+        except Exception:
+            self.logger.exception(
+                f"Не удалось загрузить модель faster-whisper '{model_size}'. "
+                f"Проверьте наличие модели, свободную память и параметр MODEL_SIZE в .env"
+            )
+            raise
 
     def _load_model(self):
         self._device = "cuda" if torch.cuda.is_available() else "cpu"
-        self._compute_type = "int8_float16"
+        self._compute_type = "int8_float16" if self._device == "cuda" else "int8"
 
         self.logger.info(
             f"Загружаем модель faster-whisper '{self._model_size}' "

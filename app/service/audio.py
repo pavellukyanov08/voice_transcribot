@@ -1,8 +1,9 @@
 import logging
 import time
 from pathlib import Path
+from aiogram import Bot
 
-from app.core import voice_transcribot, settings
+from app.core import settings
 from app.core.transcriber import BaseSTTTranscriber
 from app.schemas import (
     AudioProcessingResult,
@@ -13,14 +14,19 @@ from app.crud import AudioRepository
 
 
 logger = logging.getLogger(__name__)
-_audio_dir = Path(settings.AUDIO_DIR)
 
 
 class AudioService:
-    def __init__(self, audio_repo: AudioRepository, stt_service: BaseSTTTranscriber):
+    def __init__(
+        self,
+        bot: Bot,
+        audio_repo: AudioRepository,
+        stt_service: BaseSTTTranscriber
+    ):
+        self._bot = bot
         self._audio_repo = audio_repo
-        self.stt_service = stt_service
-        _audio_dir.mkdir(exist_ok=True)
+        self._stt_service = stt_service
+        self._audio_dir = Path(settings.AUDIO_DIR)
 
     async def process_audio_message(
         self,
@@ -38,7 +44,7 @@ class AudioService:
                     error_message="Не удалось скачать голосовой файл"
                 )
 
-            text = await self.stt_service.transcribe(ogg_path)
+            text = await self._stt_service.transcribe(ogg_path)
             processing_time = time.time() - start_time
             if text:
                 saved = await self._save_transcription_to_db(
@@ -72,12 +78,11 @@ class AudioService:
         finally:
             self._cleanup_files(ogg_path)
 
-    @staticmethod
-    async def _download_audio_file(file_id: str) -> Path | None:
+    async def _download_audio_file(self, file_id: str) -> Path | None:
         try:
-            file = await voice_transcribot.get_file(file_id)
-            ogg_path = _audio_dir / f"{file_id}.ogg"
-            await voice_transcribot.download_file(file.file_path, destination=ogg_path)
+            file = await self._bot.get_file(file_id)
+            ogg_path = self._audio_dir / f"{file_id}.ogg"
+            await self._bot.download_file(file.file_path, destination=ogg_path)
             logger.info(f"Файл скачан: {ogg_path}")
             return ogg_path
         except Exception:
@@ -86,7 +91,7 @@ class AudioService:
 
     @staticmethod
     def _cleanup_files(file_path: Path | None):
-        if file_path.exists():
+        if file_path and file_path.exists():
             try:
                 file_path.unlink()
                 logger.debug(f"Удален временный файл: {file_path}")

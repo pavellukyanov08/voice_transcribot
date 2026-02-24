@@ -3,7 +3,7 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy import DateTime, BigInteger
 
 from app.core.db import Base
-from app.utils import DateTimeManager
+from app.utils import get_now_utc
 
 
 class User(Base):
@@ -18,7 +18,7 @@ class User(Base):
 
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),
-        default=DateTimeManager.get_now_utc,
+        default=get_now_utc,
         comment="User created date",
     )
 

@@ -4,7 +4,7 @@ from aiogram.types import Message
 
 from app.service import AudioService, UserService
 from app.schemas import AudioMessageRequest
-from app.service.user import UserServiceError
+
 
 router = Router()
 logger = logging.getLogger(__name__)
@@ -19,16 +19,12 @@ async def handle_audio(
     await message.answer("Принял голосовое, расшифровываю...")
 
     telegram_id = message.from_user.id
+    username = message.from_user.username
 
-    try:
-        await user_service.create_user(
-            telegram_id=telegram_id,
-            name=message.from_user.username or None,
-        )
-    except UserServiceError:
-        logger.error(f"Не удалось получить/создать пользователя {telegram_id}, прерываем обработку")
-        await message.answer("Произошла ошибка при регистрации. Попробуйте ещё раз.")
-        return
+    await user_service.create_user(
+        telegram_id=telegram_id,
+        name=username if username else None,
+    )
 
     try:
         voice_request = AudioMessageRequest(
@@ -43,7 +39,7 @@ async def handle_audio(
         )
 
         if result.success and result.text:
-            time_info = f" (⏱️ {result.processing_time:.1f}с)" if result.processing_time else ""
+            time_info = f"(⏱️ {result.processing_time:.1f}с)" if result.processing_time else ""
             await message.answer(f"📝 {result.text}{time_info}")
         else:
             error_msg = result.error_message or "Не смог ничего разобрать из этого голосового 😔"

@@ -1,4 +1,4 @@
-from .message import AudioRepository
+from .audio import AudioRepository
 from .user import UserRepository
 
 __all__ = [
