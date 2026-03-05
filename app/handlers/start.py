@@ -9,6 +9,6 @@ router = Router()
 async def start_handler(message: Message):
     await message.answer(
         "Привет! Я, Voice Transcriber, бот для расшифровки голосовых сообщений.\n"
-            "Мой создатель @Lukianov08 \n\n"
+        "Мой создатель @Lukianov08 \n\n"
         "Пришли мне голосовое сообщение или перешли чужое — я верну текст."
     )

@@ -23,7 +23,7 @@ services:
     ports:
       - "5488:5432"
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - postgres_data:/var/lib/postgresql
     networks:
       - voice_transcribot_network
     healthcheck:

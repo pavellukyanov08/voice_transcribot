@@ -30,18 +30,3 @@ class AudioRepository:
             )
             await self._session.rollback()
             raise
-    
-    async def get_user_messages(
-        self, 
-        user_id: int,
-        limit: int = 50, 
-        offset: int = 0
-    ) -> list[Message]:
-        result = await self._session.execute(
-            select(Message)
-            .where(Message.user_id == user_id)
-            .order_by(desc(Message.created_at))
-            .limit(limit)
-            .offset(offset)
-        )
-        return list(result.scalars().all())
