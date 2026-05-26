@@ -1,7 +1,7 @@
 import logging
 
 from .config import settings
-from .transcriber import BaseSTTTranscriber, FasterWhisperSTT
+from .transcriber import BaseSTTTranscriber
 from app.api import OpenRouterClient
 
 

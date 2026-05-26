@@ -4,11 +4,10 @@ services:
     container_name: voice_transcribot
     restart: unless-stopped
     env_file:
-      - .env.docker
+      - .env
     depends_on:
       - db
     volumes:
-      - ./models:/voice_transcribot/models:ro
       - ./audio:/voice_transcribot/audio
       - ./logs:/voice_transcribot/logs
     networks:
@@ -19,7 +18,7 @@ services:
     image: postgres:15-alpine
     restart: unless-stopped
     env_file:
-      - .env.docker
+      - .env
     ports:
       - "5488:5432"
     volumes:
