@@ -10,14 +10,15 @@ class Settings(BaseSettings):
     DB_USER: str
     DB_PASS: str
     BOT_TOKEN: str
-    
+    OPEN_ROUTER_API_KEY: str
+
     AUDIO_DIR: str = "audio"
     MODEL_SIZE: str = "small"
     WHISPER_LANGUAGE: str = "ru"
     MAX_AUDIO_SIZE_MB: int = 20
     MAX_MESSAGE_DURATION: int = 300
 
-    STT_PROVIDER: str = "faster_whisper"
+    STT_PROVIDER: str
 
     @property
     def async_database_url(self) -> str:

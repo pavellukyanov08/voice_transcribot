@@ -8,7 +8,7 @@ from pathlib import Path
 from faster_whisper import WhisperModel
 
 from .config import settings
-
+from app.api import OpenRouterClient
 
 logger = logging.getLogger(__name__)
 
@@ -43,6 +43,7 @@ class BaseSTTTranscriber(ABC):
 
     def shutdown(self) -> None:
         pass
+
 
 class FasterWhisperSTT(BaseSTTTranscriber):
     def __init__(self, model_size: str = settings.MODEL_SIZE):
@@ -137,3 +138,33 @@ class FasterWhisperSTT(BaseSTTTranscriber):
 
     def shutdown(self) -> None:
         self._executor.shutdown(wait=True)
+
+
+class OpenRouterWhisperLargeV3Turbo(BaseSTTTranscriber):
+    def __init__(self, open_router_client: OpenRouterClient):
+        super().__init__()
+        self._open_router_client = open_router_client
+
+    async def transcribe(self, audio_path: Path) -> str | None:
+        if not self._validate_audio_file(audio_path):
+            return None
+
+        try:
+            result = await self._open_router_client.transcribe(audio_path=audio_path)
+
+            if not result:
+                self.logger.warning("OpenRouter didn't return transcription result")
+                return None
+
+            self.logger.info("Transcription through OpenRouter successfully ended")
+            return result
+
+        except Exception as e:
+            self.logger.exception("Error while transcribing through OpenRouter =%s", e)
+            return None
+
+    def _load_model(self) -> None:
+        pass
+
+    def shutdown(self) -> None:
+        pass

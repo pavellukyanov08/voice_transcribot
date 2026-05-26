@@ -1,8 +1,8 @@
 import logging
-from sqlalchemy import select, ColumnElement
+from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.schemas import UserCreate, UserRead
+from app.schemas import UserCreate
 from app.models import User
 
 

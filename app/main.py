@@ -29,10 +29,10 @@ async def main():
     dp.include_router(audio.router)
 
     logger.info("Бот запущен")
-    try:
-        await dp.start_polling(transcribot)
-    finally:
-        stt_service.shutdown()
+    # try:
+    await dp.start_polling(transcribot)
+    # finally:
+    #     stt_service.shutdown()
 
 
 if __name__ == "__main__":
