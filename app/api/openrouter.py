@@ -17,6 +17,14 @@ class OpenRouterClient:
             http2=True,
         )
 
+    async def get_remaining_credits(self):
+        response = await self.client.get(
+            '/credits',
+        )
+        response.raise_for_status()
+        result = response.json()
+        return result.get("data")
+
     async def transcribe(self, audio_path: Path):
         audio_bytes = audio_path.read_bytes()
         audio_b64 = base64.b64encode(audio_bytes).decode("utf-8")

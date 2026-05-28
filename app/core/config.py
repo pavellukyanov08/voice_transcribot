@@ -11,6 +11,7 @@ class Settings(BaseSettings):
     DB_PASS: str
     BOT_TOKEN: str
     OPEN_ROUTER_API_KEY: str
+    ADMIN_ID: int
 
     AUDIO_DIR: str = "audio"
     MODEL_SIZE: str = "small"
