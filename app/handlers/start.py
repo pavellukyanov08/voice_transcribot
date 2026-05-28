@@ -36,5 +36,5 @@ async def get_remaining_credits_handler(
 
     await message.answer(
         f"Кредитов всего = {int(total_credits)}\n"
-        f"Кредитов осталось = {int(total_usage)}"
+        f"Кредитов осталось = {float(total_usage)}"
     )
