@@ -8,7 +8,7 @@ from .core import settings
 from .middlewares import DependencyMiddleware, ErrorHandlerMiddleware
 from .core.bot import transcribot
 from .core.stt_factory import get_stt_service
-from .handlers import start, audio
+from .handlers import start, audio, text
 from .utils import setup_logging
 
 
@@ -27,12 +27,10 @@ async def main():
 
     dp.include_router(start.router)
     dp.include_router(audio.router)
+    dp.include_router(text.router)
 
     logger.info("Бот запущен")
-    # try:
     await dp.start_polling(transcribot)
-    # finally:
-    #     stt_service.shutdown()
 
 
 if __name__ == "__main__":
