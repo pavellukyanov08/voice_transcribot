@@ -1,9 +1,10 @@
 from .config import settings
 from .bot import transcribot
-from .stt_factory import get_stt_service
+from .llm_init import get_stt_transcriber, get_text_generator
 
 __all__ = [
     "settings", 
     "transcribot",
-    "get_stt_service"
+    "get_stt_transcriber",
+    "get_text_generator"
 ]
