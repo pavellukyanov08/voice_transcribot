@@ -7,7 +7,7 @@ from aiogram import Dispatcher
 from .core import settings
 from .middlewares import DependencyMiddleware, ErrorHandlerMiddleware
 from .core.bot import transcribot
-from .core.stt_factory import get_stt_service
+from .core.llm_init import get_text_generator, get_stt_transcriber
 from .handlers import start, audio, text
 from .utils import setup_logging
 
@@ -20,9 +20,10 @@ logger = logging.getLogger(__name__)
 
 async def main():
     Path(settings.AUDIO_DIR).mkdir(exist_ok=True)
-    stt_service = get_stt_service()
+    stt_transcriber = get_stt_transcriber()
+    text_generator = get_text_generator()
 
-    dp.message.middleware(DependencyMiddleware(stt_service))
+    dp.message.middleware(DependencyMiddleware(stt_transcriber, text_generator))
     dp.message.middleware(ErrorHandlerMiddleware())
 
     dp.include_router(start.router)

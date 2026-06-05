@@ -19,7 +19,7 @@ class Settings(BaseSettings):
     MAX_AUDIO_SIZE_MB: int = 20
     MAX_MESSAGE_DURATION: int = 300
 
-    STT_PROVIDER: str
+    PROVIDER: str
 
     @property
     def async_database_url(self) -> str:
