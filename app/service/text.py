@@ -20,11 +20,11 @@ class TextService:
         self,
         bot: Bot,
         message_repo: MessageRepository,
-        text_service: BaseTextGenerator
+        text_generator: BaseTextGenerator
     ):
         self._bot = bot
         self._message_repo = message_repo
-        self._text_service = text_service
+        self._text_generator = text_generator
         self._audio_dir = Path(settings.AUDIO_DIR)
 
     async def process_text(
@@ -34,7 +34,7 @@ class TextService:
     ) -> MessageProcessingResult:
         content = text_request.text
         try:
-            result = await self._text_service.process_text(
+            result = await self._text_generator.process_text(
                 content=content
             )
             if not result:

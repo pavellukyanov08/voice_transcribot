@@ -21,11 +21,11 @@ class AudioService:
         self,
         bot: Bot,
         message_repo: MessageRepository,
-        stt_service: BaseSTTTranscriber
+        stt_transcriber: BaseSTTTranscriber
     ):
         self._bot = bot
         self._message_repo = message_repo
-        self._stt_service = stt_service
+        self._stt_transcriber = stt_transcriber
         self._audio_dir = Path(settings.AUDIO_DIR)
 
     async def process_audio_message(
@@ -44,7 +44,7 @@ class AudioService:
                     error_message="Не удалось скачать голосовой файл"
                 )
 
-            text = await self._stt_service.transcribe(ogg_path)
+            text = await self._stt_transcriber.transcribe(ogg_path)
             processing_time = time.time() - start_time
             if text:
                 saved = await self._save_transcription_to_db(
