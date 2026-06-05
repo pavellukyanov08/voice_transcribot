@@ -2,7 +2,6 @@ from pydantic import BaseModel, Field, field_validator
 from app.core import settings
 
 
-
 class AudioMessageRequest(BaseModel):
     file_id: str = Field(..., description="ID файла в Telegram")
     duration: int = Field(..., ge=1, description="Длительность в секундах")

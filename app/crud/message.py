@@ -1,22 +1,21 @@
 import logging
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select, desc
 
 from app.models import Message
-from app.schemas import MessageCreate
+from app.schemas import MessageResult
 
 
 logger = logging.getLogger(__name__)
 
 
-class AudioRepository:
+class MessageRepository:
     def __init__(
         self,
         session: AsyncSession
     ) -> None:
         self._session = session
 
-    async def create_message(self, message_data: MessageCreate) -> None:
+    async def create_message(self, message_data: MessageResult) -> None:
         try:
             new_message = Message(**message_data.model_dump())
             self._session.add(new_message)

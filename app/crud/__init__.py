@@ -1,7 +1,7 @@
-from .audio import AudioRepository
+from .message import MessageRepository
 from .user import UserRepository
 
 __all__ = [
-    "AudioRepository",
+    "MessageRepository",
     "UserRepository",
 ]

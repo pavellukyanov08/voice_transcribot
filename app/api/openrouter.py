@@ -44,3 +44,26 @@ class OpenRouterClient:
         response.raise_for_status()
         result = response.json()
         return result.get("text")
+
+    async def generate_text(self, content: str):
+        payload = {
+            "model": "deepseek/deepseek-v4-flask",
+            "messages": [
+                {
+                    "role": "system",
+                    "content": "You are a helpful assistant"
+                },
+                {
+                    "role": "user",
+                    "content": f"{content}"
+                }
+            ],
+            "language": "ru",
+        }
+        response = await self.client.post(
+            "/chat/completions",
+            json=payload,
+        )
+        response.raise_for_status()
+        result = response.json()["choices"][0]["message"]["content"]
+        return result

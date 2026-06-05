@@ -11,7 +11,7 @@ class Message(Base):
 
     id: Mapped[int] = mapped_column(primary_key=True, comment="ID записи транскрипции")
     text: Mapped[str] = mapped_column(comment="Распознанный текст")
-    processing_time: Mapped[float] = mapped_column(comment="Время обработки в секундах")
+    processing_time: Mapped[float] = mapped_column(nullable=True, comment="Время обработки в секундах")
     
     user_id: Mapped[int] = mapped_column(
         ForeignKey("users.telegram_id", ondelete="CASCADE", onupdate="CASCADE"),

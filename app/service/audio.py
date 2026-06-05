@@ -8,9 +8,9 @@ from app.core.transcriber import BaseSTTTranscriber
 from app.schemas import (
     AudioProcessingResult,
     AudioMessageRequest,
-    MessageCreate
+    MessageResult
 )
-from app.crud import AudioRepository
+from app.crud import MessageRepository
 
 
 logger = logging.getLogger(__name__)
@@ -20,11 +20,11 @@ class AudioService:
     def __init__(
         self,
         bot: Bot,
-        audio_repo: AudioRepository,
+        message_repo: MessageRepository,
         stt_service: BaseSTTTranscriber
     ):
         self._bot = bot
-        self._audio_repo = audio_repo
+        self._message_repo = message_repo
         self._stt_service = stt_service
         self._audio_dir = Path(settings.AUDIO_DIR)
 
@@ -105,14 +105,14 @@ class AudioService:
         processing_time: float,
     ) -> bool:
         try:
-            message_data = MessageCreate(
+            message_data = MessageResult(
                 text=text,
                 processing_time=processing_time,
                 user_id=user_id
             )
-            await self._audio_repo.create_message(message_data=message_data)
+            await self._message_repo.create_message(message_data=message_data)
             logger.info(f"Транскрипция сохранена в БД для пользователя {user_id}")
             return True
-        except Exception:
-            logger.exception("Ошибка при сохранении транскрипции в БД")
+        except Exception as e:
+            logger.exception("Ошибка при сохранении транскрипции в БД =%s", e)
             return False

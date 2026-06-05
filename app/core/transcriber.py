@@ -11,7 +11,6 @@ logger = logging.getLogger(__name__)
 class BaseSTTTranscriber(ABC):
     def __init__(self):
         self.logger = logger
-        self._is_initialized = False
 
     @abstractmethod
     async def transcribe(self, audio_path: Path) -> str | None:

@@ -1,5 +1,7 @@
 import logging
+
 from sqlalchemy import select
+from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.schemas import UserCreate
@@ -16,17 +18,6 @@ class UserRepository:
     ) -> None:
         self._session = session
 
-    async def check_user_exists(
-        self,
-        telegram_id: int,
-    ) -> bool:
-        stmt = select(User).where(User.telegram_id == telegram_id)
-        result = await self._session.execute(stmt)
-        row = result.first()
-        if row is None:
-            return False
-        return True
-
     async def get_user_by_tg_id(self, telegram_id: int) -> User | None:
         stmt = select(User).where(User.telegram_id == telegram_id)
         result = await self._session.execute(stmt)
@@ -34,13 +25,18 @@ class UserRepository:
 
     async def create_user(self, user_data: UserCreate) -> None:
         try:
-            if not await self.check_user_exists(user_data.telegram_id):
-                new_user = User(
+            stmt = (
+                insert(User)
+                .values(
                     telegram_id=user_data.telegram_id,
                     name=user_data.name
                 )
-                self._session.add(new_user)
-                await self._session.commit()
+                .on_conflict_do_nothing(
+                    index_elements=['telegram_id']
+                )
+            )
+            await self._session.execute(stmt)
+            await self._session.commit()
         except Exception as e:
             logger.error(
                 f"Failed to create user={user_data.telegram_id}: {e}", exc_info=True)

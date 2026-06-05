@@ -1,11 +1,14 @@
 from .user import UserRead, UserCreate
-from .message import MessageCreate
+from .text import MessageProcessingResult, UserRequestText
 from .audio import AudioMessageRequest, AudioProcessingResult
+from .common import MessageResult
 
 __all__ = [
     "UserRead",
     "UserCreate",
-    "MessageCreate",
+    "MessageResult",
+    "MessageProcessingResult",
+    "UserRequestText",
     "AudioMessageRequest",
     "AudioProcessingResult",
 ]
