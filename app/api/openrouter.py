@@ -47,7 +47,7 @@ class OpenRouterClient:
 
     async def generate_text(self, content: str):
         payload = {
-            "model": "deepseek/deepseek-v4-flask",
+            "model": "deepseek/deepseek-v4-flash",
             "messages": [
                 {
                     "role": "system",
