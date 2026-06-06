@@ -5,6 +5,8 @@ from aiogram.types import Message
 from app.api import OpenRouterClient
 from app.core import settings
 from app.service import UserService
+from app.utils import check_user_admin
+
 
 router = Router()
 
@@ -26,7 +28,7 @@ async def get_remaining_credits_handler(
     openrouter_client: OpenRouterClient
 ):
     user_id = message.from_user.id
-    if user_id != settings.ADMIN_ID:
+    if not check_user_admin(user_id):
         await message.answer(
             "У вас нет доступа к этой команде!"
         )

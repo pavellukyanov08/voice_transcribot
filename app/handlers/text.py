@@ -6,6 +6,8 @@ from aiogram.types import Message
 from app.service import UserService, TextService
 from app.schemas import UserRequestText
 from app.state.request import RequestState
+from app.utils import check_user_allowed
+
 
 router = Router()
 logger = logging.getLogger(__name__)
@@ -14,17 +16,20 @@ logger = logging.getLogger(__name__)
 @router.message(F.text == '/request')
 async def handle_request(
     message: Message,
-    text_service: TextService,
     user_service: UserService,
     state: FSMContext,
 ):
-    await message.answer("Пришли мне запрос")
-
-    telegram_id = message.from_user.id
+    user_id = message.from_user.id
     username = message.from_user.username
 
+    if not check_user_allowed(user_id):
+        await message.answer("У вас нет доступа к этой команде!")
+        return
+
+    await message.answer("Пришли мне запрос")
+
     await user_service.create_user(
-        telegram_id=telegram_id,
+        telegram_id=user_id,
         name=username if username else None,
     )
 

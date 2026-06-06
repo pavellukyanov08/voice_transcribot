@@ -12,6 +12,7 @@ class Settings(BaseSettings):
     BOT_TOKEN: str
     OPEN_ROUTER_API_KEY: str
     ADMIN_ID: int
+    ALLOWED_USERS: list[int]
 
     AUDIO_DIR: str = "audio"
     MODEL_SIZE: str = "small"
