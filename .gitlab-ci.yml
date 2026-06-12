@@ -25,8 +25,8 @@ deploy:
   before_script:
     - apk add --no-cache openssh
     - mkdir -p ~/.ssh
-    - echo "$SSH_PRIVATE_KEY" | tr -d '\r' > ~/.ssh/amedia_serv_gitlab
-    - chmod 600 ~/.ssh/amedia_serv_gitlab
+    - echo "$SSH_PRIVATE_KEY" | tr -d '\r' > ~/.ssh/gitlab_cicd_access
+    - chmod 600 ~/.ssh/gitlab_cicd_access
     - ssh-keyscan -H $SERVER_IP >> ~/.ssh/known_hosts
   script:
     - ssh $SERVER_USER@$SERVER_IP "
