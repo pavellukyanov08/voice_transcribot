@@ -15,8 +15,6 @@ class Settings(BaseSettings):
     ALLOWED_USERS: list[int]
 
     AUDIO_DIR: str = "audio"
-    MODEL_SIZE: str = "small"
-    WHISPER_LANGUAGE: str = "ru"
     MAX_AUDIO_SIZE_MB: int = 20
     MAX_MESSAGE_DURATION: int = 300
 
