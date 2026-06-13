@@ -29,13 +29,11 @@ deploy:
     - chmod 600 ~/.ssh/gitlab_cicd_deploy
     - ssh-keyscan -H "$SERVER_IP" >> ~/.ssh/known_hosts
   script:
-    - >
-      ssh -i ~/.ssh/gitlab_cicd_deploy deploy@$SERVER_IP "
-        set -e &&
+    - ssh -i ~/.ssh/gitlab_cicd_deploy deploy@$SERVER_IP bash -c "'
         cd /home/voice_transcribot &&
         docker login registry.gitlab.com -u gitlab-ci-token -p $CI_JOB_TOKEN &&
         docker compose pull &&
         docker compose up -d
-      "
+      '"
   rules:
     - if: '$CI_COMMIT_BRANCH == "main"'
