@@ -16,24 +16,26 @@ build:
     - docker push $IMAGE:$CI_COMMIT_SHA
     - docker tag $IMAGE:$CI_COMMIT_SHA $IMAGE:latest
     - docker push $IMAGE:latest
-  only:
-    - main
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "main"'
 
 deploy:
   stage: deploy
   image: alpine
   before_script:
-    - apk add --no-cache openssh
+    - apk add --no-cache openssh-client
     - mkdir -p ~/.ssh && chmod 700 ~/.ssh
     - echo "$SSH_PRIVATE_KEY" | tr -d '\r' > ~/.ssh/gitlab_cicd_access
     - chmod 600 ~/.ssh/gitlab_cicd_access
-    - ssh-keyscan -H $SERVER_IP >> ~/.ssh/known_hosts
+    - ssh-keyscan -H "$SERVER_IP" >> ~/.ssh/known_hosts
   script:
-    - ssh -i ~/.ssh/gitlab_cicd_access deploy@$SERVER_IP "
+    - >
+      ssh -i ~/.ssh/gitlab_cicd_access deploy@$SERVER_IP "
+        set -e &&
         cd /home/voice_transcribot &&
         docker login registry.gitlab.com -u gitlab-ci-token -p $CI_JOB_TOKEN &&
         docker compose pull &&
         docker compose up -d
       "
-  only:
-    - main
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "main"'
