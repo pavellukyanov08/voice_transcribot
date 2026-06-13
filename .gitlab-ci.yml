@@ -14,8 +14,6 @@ build:
     - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
     - docker build -t $IMAGE:$CI_COMMIT_SHA .
     - docker push $IMAGE:$CI_COMMIT_SHA
-    - docker tag $IMAGE:$CI_COMMIT_SHA $IMAGE:latest
-    - docker push $IMAGE:latest
   rules:
     - if: '$CI_COMMIT_BRANCH == "main"'
 
@@ -31,10 +29,10 @@ deploy:
   script:
     - ssh -i ~/.ssh/gitlab_cicd_deploy deploy@$SERVER_IP bash -c "'
         cd /home/voice_transcribot &&
-      export IMAGE_TAG=$CI_COMMIT_SHA &&
+        export IMAGE_TAG=$CI_COMMIT_SHA &&
         docker login registry.gitlab.com -u gitlab-ci-token -p $CI_JOB_TOKEN &&
         docker compose pull &&
-        docker compose up -d
+        docker compose up -d --force-recreate
       '"
   rules:
     - if: '$CI_COMMIT_BRANCH == "main"'
