@@ -31,6 +31,7 @@ deploy:
   script:
     - ssh -i ~/.ssh/gitlab_cicd_deploy deploy@$SERVER_IP bash -c "'
         cd /home/voice_transcribot &&
+      export IMAGE_TAG=$CI_COMMIT_SHA &&
         docker login registry.gitlab.com -u gitlab-ci-token -p $CI_JOB_TOKEN &&
         docker compose pull &&
         docker compose up -d

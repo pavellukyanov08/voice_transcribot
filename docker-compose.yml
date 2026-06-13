@@ -1,6 +1,6 @@
 services:
   bot:
-    image: registry.gitlab.com/pavellukyanov08/voice_transcribot:latest
+    image: registry.gitlab.com/pavellukyanov08/voice_transcribot:${IMAGE_TAG}
     container_name: voice_transcribot
     restart: unless-stopped
     env_file:
