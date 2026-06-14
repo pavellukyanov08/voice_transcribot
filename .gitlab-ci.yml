@@ -30,7 +30,7 @@ deploy:
     - |
       ssh -i ~/.ssh/amedia_first_serv deploy@$SERVER_IP \
         "cd /home/deploy/voice_transcribot && \
-        git pull gitlab main && \
+        git pull origin main && \
         CI_JOB_TOKEN=$CI_JOB_TOKEN \
         /home/deploy/voice_transcribot/deploy.sh $CI_COMMIT_SHA"
   rules:
