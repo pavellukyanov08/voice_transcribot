@@ -14,8 +14,9 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY app/ ./app/
 COPY alembic.ini .
 COPY migrations/ ./migrations/
-#COPY entrypoint.sh .
+COPY db_start.sh .
 
-RUN chmod -R 755 /voice_transcribot
+RUN chmod +x ./db_start.sh
 
+ENTRYPOINT ["./db_start.sh"]
 CMD ["python", "-m", "app.main"]
