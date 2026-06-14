@@ -23,16 +23,13 @@ deploy:
   before_script:
     - apk add --no-cache openssh-client
     - mkdir -p ~/.ssh && chmod 700 ~/.ssh
-    - echo "$SSH_PRIVATE_KEY" | tr -d '\r' > ~/.ssh/gitlab_cicd_deploy
-    - chmod 600 ~/.ssh/gitlab_cicd_deploy
+    - echo "$SSH_PRIVATE_KEY" | tr -d '\r' > ~/.ssh/amedia_first_serv
+    - chmod 600 ~/.ssh/amedia_first_serv
     - ssh-keyscan -H "$SERVER_IP" >> ~/.ssh/known_hosts
   script:
-    - ssh -i ~/.ssh/gitlab_cicd_deploy deploy@$SERVER_IP bash -c "'
-        cd /home/voice_transcribot &&
-        export IMAGE_TAG=$CI_COMMIT_SHA &&
-        docker login registry.gitlab.com -u gitlab-ci-token -p $CI_JOB_TOKEN &&
-        docker compose pull &&
-        docker compose up -d --force-recreate
-      '"
+    - |
+      ssh -i ~/.ssh/amedia_first_serv deploy@$SERVER_IP \
+        "CI_JOB_TOKEN=$CI_JOB_TOKEN \
+         /home/deploy/voice_transcribot/deploy.sh $CI_COMMIT_SHA"
   rules:
     - if: '$CI_COMMIT_BRANCH == "main"'
