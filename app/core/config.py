@@ -18,6 +18,8 @@ class Settings(BaseSettings):
     MAX_AUDIO_SIZE_MB: int = 20
     MAX_MESSAGE_DURATION: int = 300
 
+    EXTENSIONS: dict[str]
+
     PROVIDER: str
 
     @property
