@@ -38,3 +38,9 @@ class UserService:
         if user is None:
             return None
         return UserRead.model_validate(user, from_attributes=True)
+
+    async def get_users(
+        self,
+    ) -> list[UserRead]:
+        users = await self._user_repo.get_users()
+        return [UserRead.model_validate(user, from_attributes=True) for user in users]

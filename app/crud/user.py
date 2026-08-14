@@ -23,6 +23,11 @@ class UserRepository:
         result = await self._session.execute(stmt)
         return result.scalar_one_or_none()
 
+    async def get_users(self) -> list[User]:
+        stmt = select(User)
+        result = await self._session.execute(stmt)
+        return result.scalars().all()
+
     async def create_user(self, user_data: UserCreate) -> None:
         try:
             stmt = (

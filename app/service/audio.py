@@ -79,57 +79,57 @@ class AudioService:
         finally:
             self._cleanup_files(ogg_path)
 
-    async def process_video(
-        self,
-        file_request: AudioMessageRequest,
-        user_id: int
-    ) -> AudioProcessingResult:
-        suffix = settings.EXTENSIONS[file_request.mime_type]
-
-        with tempfile.NamedTemporaryFile(delete=False, suffix=suffix) as tmp:
-            tmp_path = tmp.name
-
-        try:
-            tmp_path = await self._download_audio_file(file_request.file_id)
-            if not :
-                return AudioProcessingResult(
-                    success=False,
-                    error_message="Не удалось скачать голосовой файл"
-                )
-
-            text = await self._stt_transcriber.transcribe(ogg_path)
-            processing_time = time.time() - start_time
-            if text:
-                saved = await self._save_transcription_to_db(
-                    text=text,
-                    user_id=user_id,
-                    processing_time=processing_time
-                )
-
-                return AudioProcessingResult(
-                    success=True,
-                    text=text,
-                    processing_time=processing_time,
-                    saved_to_db=saved,
-                )
-            else:
-                return AudioProcessingResult(
-                    success=False,
-                    error_message="Не удалось распознать речь в аудиофайле",
-                    processing_time=processing_time
-                )
-
-        except Exception as e:
-            processing_time = time.time() - start_time
-            logger.exception(f"Ошибка при обработке голосового сообщения {voice_request.file_id}")
-            return AudioProcessingResult(
-                success=False,
-                error_message=f"Внутренняя ошибка: {str(e)}",
-                processing_time=processing_time
-            )
-
-        finally:
-            self._cleanup_files(ogg_path)
+    # async def process_video(
+    #     self,
+    #     file_request: AudioMessageRequest,
+    #     user_id: int
+    # ) -> AudioProcessingResult:
+    #     suffix = settings.EXTENSIONS[file_request.mime_type]
+    #
+    #     with tempfile.NamedTemporaryFile(delete=False, suffix=suffix) as tmp:
+    #         tmp_path = tmp.name
+    #
+    #     try:
+    #         tmp_path = await self._download_audio_file(file_request.file_id)
+    #         if not tmp_path:
+    #             return AudioProcessingResult(
+    #                 success=False,
+    #                 error_message="Не удалось скачать голосовой файл"
+    #             )
+    #
+    #         text = await self._stt_transcriber.transcribe(ogg_path)
+    #         processing_time = time.time() - start_time
+    #         if text:
+    #             saved = await self._save_transcription_to_db(
+    #                 text=text,
+    #                 user_id=user_id,
+    #                 processing_time=processing_time
+    #             )
+    #
+    #             return AudioProcessingResult(
+    #                 success=True,
+    #                 text=text,
+    #                 processing_time=processing_time,
+    #                 saved_to_db=saved,
+    #             )
+    #         else:
+    #             return AudioProcessingResult(
+    #                 success=False,
+    #                 error_message="Не удалось распознать речь в аудиофайле",
+    #                 processing_time=processing_time
+    #             )
+    #
+    #     except Exception as e:
+    #         processing_time = time.time() - start_time
+    #         logger.exception(f"Ошибка при обработке голосового сообщения {voice_request.file_id}")
+    #         return AudioProcessingResult(
+    #             success=False,
+    #             error_message=f"Внутренняя ошибка: {str(e)}",
+    #             processing_time=processing_time
+    #         )
+    #
+    #     finally:
+    #         self._cleanup_files(ogg_path)
 
     async def _download_audio_file(self, file_id: str) -> Path | None:
         try:

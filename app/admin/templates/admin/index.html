@@ -1,0 +1,45 @@
+{% extends "admin/base.html" %}
+
+{% block title %}
+    Админка
+{% endblock %}
+
+{% block content %}
+
+<main>
+    <div class="users-block">
+        <h2>Пользователи</h2>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Telegram ID</th>
+                    <th>Имя</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for user in users %}
+                <tr>
+                    <td>{{ user.telegram_id }}</td>
+                    <td>{{ user.name }}</td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="2">Пользователей пока нет</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</main>
+
+<div class="card">
+    <div class="buttons">
+
+        <button>👤 Пользователи</button>
+        <button>📊 Статистика</button>
+        <button>⚙️ Настройки</button>
+    </div>
+</div>
+
+{% endblock %}

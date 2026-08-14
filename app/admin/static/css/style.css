@@ -1,0 +1,57 @@
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    padding: 20px;
+
+    font-family: Arial, sans-serif;
+
+    background: var(--tg-theme-bg-color, #ffffff);
+    color: var(--tg-theme-text-color, #000000);
+}
+
+header {
+    margin-bottom: 20px;
+}
+
+.card {
+    padding: 20px;
+    margin-bottom: 16px;
+
+    border-radius: 16px;
+
+    background: var(
+        --tg-theme-secondary-bg-color,
+        #f2f2f2
+    );
+}
+
+.buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+button {
+    width: 100%;
+
+    padding: 14px;
+
+    border: none;
+    border-radius: 12px;
+
+    background: var(
+        --tg-theme-button-color,
+        #2481cc
+    );
+
+    color: var(
+        --tg-theme-button-text-color,
+        #ffffff
+    );
+
+    font-size: 16px;
+    cursor: pointer;
+}

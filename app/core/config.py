@@ -13,12 +13,14 @@ class Settings(BaseSettings):
     OPEN_ROUTER_API_KEY: str
     ADMIN_ID: int
     ALLOWED_USERS: list[int]
+    ADMIN_USERNAME: str
+    ADMIN_PASSWORD: str
 
     AUDIO_DIR: str = "audio"
     MAX_AUDIO_SIZE_MB: int = 20
     MAX_MESSAGE_DURATION: int = 300
 
-    EXTENSIONS: dict[str]
+    EXTENSIONS: dict[str, str]
 
     PROVIDER: str
 

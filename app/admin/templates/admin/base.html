@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>{% block title %}Админка{% endblock %}</title>
+
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', path='css/style.css') }}"
+    >
+</head>
+
+<body>
+    <header>
+        <h2>🤖 Админка - Voice Transcribot</h2>
+        <h2>Добро пожаловать, </h2><p>{{ users[0] }}</p>
+    </header>
+
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+
+    <script>
+        src="{{ url_for('static', path='js/app.js') }}"
+    </script>
+
+</body>
+</html>
